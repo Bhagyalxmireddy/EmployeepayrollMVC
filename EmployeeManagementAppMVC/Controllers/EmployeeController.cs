@@ -97,6 +97,63 @@ namespace EmployeeManagementAppMVC.Controllers
                 throw e;
             }
         }
+        public ActionResult Edit(EmployeeViewModel item)
+        {
+            RegisterEmpRequestModel emp = new RegisterEmpRequestModel
+            {
+                EmpId = item.EmpId,
+                Name = item.Name,
+                Gender = item.Gender,
+                Department = item.Department,
+                SalaryId = item.SalaryId.ToString(),
+                StartDate = item.StartDate,
+                Description = item.Description
+            };
+
+            return View(emp);
+        }
+        public ActionResult EditEmployee(RegisterEmpRequestModel employee)
+        {
+            bool result = EditEmployeeService(employee);
+            if (result == true)
+            {
+                List<EmployeeViewModel> list = GetAllEmployee();
+                return View("EmployeeList", list);
+            }
+            else
+            {
+                return View("Error");
+            }
+        }
+        public bool EditEmployeeService(RegisterEmpRequestModel employee)
+        {
+            try
+            {
+                int departmentId = db.Departments.Where(x => x.DeptName == employee.Department).Select(x => x.DeptId).FirstOrDefault();
+
+                Employee emp = db.Employees.Find(employee.EmpId);
+                emp.Name = employee.Name;
+                emp.SalaryId = Convert.ToInt32(employee.SalaryId);
+                emp.StartDate = employee.StartDate;
+                emp.Description = employee.Description;
+                emp.Gender = employee.Gender;
+                emp.DepartmentId = departmentId;
+
+                int result = db.SaveChanges();
+                if (result > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
 
     }
 }
