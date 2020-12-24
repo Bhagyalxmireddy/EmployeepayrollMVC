@@ -154,6 +154,44 @@ namespace EmployeeManagementAppMVC.Controllers
                 throw e;
             }
         }
+        public ActionResult Delete(int id)
+        {
+            bool result = DeleteEmployee(id);
+            if (result == true)
+            {
+                List<EmployeeViewModel> list = GetAllEmployee();
+                return View("EmployeeList", list);
+            }
+            else
+            {
+                return View("Error");
+            }
+        }
+        public bool DeleteEmployee(int id)
+        {
+            try
+            {
+                Employee employee = db.Employees.Find(id);
+                if (employee == null)
+                {
+                    return false;
+                }
+                db.Employees.Remove(employee);
+                int result = db.SaveChanges();
+                if (result > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
 
     }
 }
